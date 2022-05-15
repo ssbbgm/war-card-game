@@ -9,6 +9,9 @@ playGame()
 document.querySelector('button').addEventListener('click', drawTwo)
 
 function playGame(){
+  player1Card.innerHTML = '';
+  player2Card.innerHTML = '';
+  document.querySelector('h3').innerText = ''
 
   fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
       .then(res => res.json()) // parse response as JSON
@@ -39,14 +42,24 @@ function drawTwo(){
       .then(data => {
         console.log(data);
         
-        document.querySelector('#player1').src = data.cards[0].image;
-        document.querySelector('#player2').src = data.cards[1].image;
+        player1Card.innerHTML = '';
+        player2Card.innerHTML = '';
+
+        let player1 = document.createElement('img');
+        let player2 = document.createElement('img');
+        player1.src = data.cards[0].image;
+        player2.src = data.cards[1].image;
+
+        player1Card.appendChild(player1);
+        player2Card.appendChild(player2);
+
+        // document.querySelector('#player1').src = data.cards[0].image;
+        // document.querySelector('#player2').src = data.cards[1].image;
         let player1Val = convertToNum(data.cards[0].value);
         let player2Val = convertToNum(data.cards[1].value);
 
 
-        if (player1Val > player2Val){
-
+        if (player1Val > player2Val) {
           document.querySelector('h3').innerText = 'Player 1 Wins'
           if(data.remaining === 0){
             const confirmation = confirm('You have completed the game. Would you like to play again?');
@@ -70,11 +83,12 @@ function drawTwo(){
         } else {
 
           document.querySelector('h3').innerText = 'Time for WARRRRRR!'
+          
           setTimeout(() => {
-            if(data.remaining <=8){
+            if( data.success=true && data.remaining <=8){
               shuffle(data);
             } else {
-              playWar()
+              playWar();
             }
           }, 2000);
         }
@@ -149,13 +163,13 @@ function playWar(){
         playerTwoCards.appendChild(p2FourthCard)
 
         
-      
         let player1WarCard = convertToNum(data.cards[3].value);
         let player2WarCard = convertToNum(data.cards[7].value);
 
         if (player1WarCard > player2WarCard) {
 
           document.querySelector('h3').innerText = 'Player 1 Wins'
+
           if(data.remaining === 0){
             const confirmation = confirm('You have completed the game. Would you like to play again?');
             if(confirmation) {
@@ -175,24 +189,23 @@ function playWar(){
               alert('Thanks for playing')
             }
         } else {
-
             setTimeout(() => {
-              if(data.remaining <=8){
-                shuffle(data);
-              } else {
-                playWar()
-              }
+              if (data.success=true && data.remaining <=8){
+                shuffle(data.deck_id);
+              } 
             }, 2000);
         }
       }
       });
     }
  
-      
+    //Updated this, not working
    function shuffle (data){
+     let deckID = data.data_id;
     if (data.remaining <= 8){
-      fetch(`https://deckofcardsapi.com/api/deck/${deckID}/shuffle/?remaining=true`)
+      fetch(`https://deckofcardsapi.com/api/deck/${deckID}/shuffle/`)
       .then(res => res.json())
+      .then(playWar())
     }
   }
   
