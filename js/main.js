@@ -76,7 +76,7 @@ function drawTwo(){
             } else {
               playWar()
             }
-          }, 5000);
+          }, 2000);
         }
       })
       .catch(err => {
@@ -182,7 +182,7 @@ function playWar(){
               } else {
                 playWar()
               }
-            }, 5000);
+            }, 2000);
         }
       }
       });
