@@ -23,7 +23,14 @@ function playGame(){
 }
 
 function drawTwo(){
+  player1Card.src = "";
+  player2Card.src = "";
 
+  player1Card.style.display = "block";
+  player2Card.style.display = "block";
+
+  playerOneCards.innerHTML = "";
+  playerTwoCards.innerHTML = "";
 
   const url = `https://deckofcardsapi.com/api/deck/${deckID}/draw/?count=2`
 
@@ -39,18 +46,37 @@ function drawTwo(){
 
 
         if (player1Val > player2Val){
+
           document.querySelector('h3').innerText = 'Player 1 Wins'
           if(data.remaining === 0){
-            confirm('You have completed the game. Would you like to play again?');
+            const confirmation = confirm('You have completed the game. Would you like to play again?');
+            if(confirmation) {
+              playGame();
+            } else {
+              alert('Thanks for playing')
+            }
           }
         } else if (player1Val < player2Val){
+
           document.querySelector('h3').innerText = 'Player 2 Wins'
           if(data.remaining === 0){
-            confirm('You have completed the game. Would you like to play again?');
+            const confirmation = confirm('You have completed the game. Would you like to play again?');
+            if(confirmation) {
+              playGame();
+            } else {
+              alert('Thanks for playing')
+            }
           }
         } else {
+
           document.querySelector('h3').innerText = 'Time for WARRRRRR!'
-          playWar()
+          setTimeout(() => {
+            if(data.remaining <=8){
+              shuffle(data);
+            } else {
+              playWar()
+            }
+          }, 5000);
         }
       })
       .catch(err => {
@@ -73,13 +99,24 @@ function convertToNum (val){
 }
 
 
+
+
 function playWar(){
+    // clear out the regular player cards first
+    player1Card.style.display = "none";
+    player2Card.style.display = "none";
+
   const drawEight = `https://deckofcardsapi.com/api/deck/${deckID}/draw/?count=8`
+
+
 
   fetch(drawEight)
       .then(res => res.json()) // parse response as JSON
       .then(data => {
         console.log(data);
+
+        playerOneCards.innerHTML = "";
+        playerTwoCards.innerHTML = "";
 
         let p1FirstCard = document.createElement('img')
         let p1SecondCard = document.createElement('img')
@@ -117,31 +154,40 @@ function playWar(){
         let player2WarCard = convertToNum(data.cards[7].value);
 
         if (player1WarCard > player2WarCard) {
+
           document.querySelector('h3').innerText = 'Player 1 Wins'
           if(data.remaining === 0){
-            confirm('You have completed the game. Would you like to play again?');
-            if(confirm) {
-              // playGame();
+            const confirmation = confirm('You have completed the game. Would you like to play again?');
+            if(confirmation) {
+              playGame();
             } else {
               alert('Thanks for playing')
             }
-        } else if (player1WarCard < player2WarCard){
+          }    
+        } else if (player1WarCard < player2WarCard) {
+
           document.querySelector('h3').innerText = 'Player 2 Wins'
           if(data.remaining === 0){
-            confirm('You have completed the game. Would you like to play again?');
-            if(confirm) {
-              // playGame();
+            const confirmation = confirm('You have completed the game. Would you like to play again?');
+            if(confirmation) {
+              playGame();
             } else {
               alert('Thanks for playing')
             }
         } else {
-            alert('Time for WARRRRRR!')
-            // return playWar();
+
+            setTimeout(() => {
+              if(data.remaining <=8){
+                shuffle(data);
+              } else {
+                playWar()
+              }
+            }, 5000);
         }
       }
+      });
     }
-    })
-  }
+ 
       
    function shuffle (data){
     if (data.remaining <= 8){
