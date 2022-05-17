@@ -120,7 +120,7 @@ function playWar(){
     player1Card.style.display = "none";
     player2Card.style.display = "none";
 
-  const drawEight = `https://deckofcardsapi.com/api/deck/${deckID}/draw/?count=8`
+  const drawEight = `https://deckofcardsapi.com/api/deck/${deckID}/draw/?count=2`
 
 
 
@@ -137,10 +137,14 @@ function playWar(){
         let p1ThirdCard = document.createElement('img')
         let p1FourthCard = document.createElement('img')
 
-        p1FirstCard.src = data.cards[0].image;
-        p1SecondCard.src = data.cards[1].image;
-        p1ThirdCard.src = data.cards[2].image;
-        p1FourthCard.src = data.cards[3].image;
+        p1FirstCard.classList.add('card-size');
+        p1SecondCard.classList.add('card-size');
+        p1ThirdCard.classList.add('card-size');
+
+        p1FirstCard.src = './img/back-of-card.png'
+        p1SecondCard.src = './img/back-of-card.png';
+        p1ThirdCard.src = './img/back-of-card.png';
+        p1FourthCard.src = data.cards[0].image;
 
         playerOneCards.appendChild(p1FirstCard)
         playerOneCards.appendChild(p1SecondCard)
@@ -152,10 +156,14 @@ function playWar(){
         let p2ThirdCard = document.createElement('img')
         let p2FourthCard = document.createElement('img')
 
-        p2FirstCard.src = data.cards[4].image;
-        p2SecondCard.src = data.cards[5].image;
-        p2ThirdCard.src = data.cards[6].image;
-        p2FourthCard.src = data.cards[7].image;
+        p2FirstCard.classList.add('card-size');
+        p2SecondCard.classList.add('card-size');
+        p2ThirdCard.classList.add('card-size');
+
+        p2FirstCard.src = './img/back-of-card.png';
+        p2SecondCard.src = './img/back-of-card.png';
+        p2ThirdCard.src = './img/back-of-card.png';
+        p2FourthCard.src = data.cards[1].image;
 
         playerTwoCards.appendChild(p2FirstCard)
         playerTwoCards.appendChild(p2SecondCard)
@@ -163,8 +171,8 @@ function playWar(){
         playerTwoCards.appendChild(p2FourthCard)
 
         
-        let player1WarCard = convertToNum(data.cards[3].value);
-        let player2WarCard = convertToNum(data.cards[7].value);
+        let player1WarCard = convertToNum(data.cards[0].value);
+        let player2WarCard = convertToNum(data.cards[1].value);
 
         if (player1WarCard > player2WarCard) {
 
@@ -190,8 +198,13 @@ function playWar(){
             }
         } else {
             setTimeout(() => {
-              if (data.success=true && data.remaining <=8){
-                shuffle(data.deck_id);
+              if (data.success=true && data.remaining <=2){
+                let shuffleCards = window.confirm('You are out of cards. Please shuffle')
+                if(shuffleCards){
+                  shuffle(data.deck_id);
+                } else {
+                  playGame()
+                }
               } 
             }, 2000);
         }
@@ -202,10 +215,8 @@ function playWar(){
     //Updated this, not working
    function shuffle (data){
      let deckID = data.data_id;
-    if (data.remaining <= 8){
       fetch(`https://deckofcardsapi.com/api/deck/${deckID}/shuffle/`)
       .then(res => res.json())
       .then(playWar())
-    }
   }
   
